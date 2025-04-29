@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="vinyl-results-container">
+    <h2>Recommended Albums for Vinyl</h2>
+    <p class="info-text">Showing full-length albums (4+ tracks) that meet your selected completion threshold. Singles and EPs are excluded.</p>
+    {% if recommendations %}
+        <div class="albums-grid">
+            {% for album in recommendations %}
+            <div class="album-card">
+                {% if album.image_url %}
+                <img src="{{ album.image_url }}" alt="{{ album.name }}" class="album-cover">
+                {% endif %}
+                <div class="album-info">
+                    <h3>{{ album.name }}</h3>
+                    <p class="artist">by {{ album.artist }}</p>
+                    <p class="stats">You listen to {{ album.listened_tracks }} out of {{ album.total_tracks }} tracks</p>
+                    <div class="completion-bar">
+                        <div class="completion-fill" data-percentage="{{ '%d'|format(album.percentage) }}"></div>
+                    </div>
+                    <p class="percentage">{{ "%.1f"|format(album.percentage) }}% of album</p>
+                    <div class="tracks-listened">
+                        <h4>Tracks You Listen To:</h4>
+                        <ul>
+                            {% for track in album.tracks_listened %}
+                            <li>{{ track }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <a href="{{ album.spotify_url }}" target="_blank" class="btn btn-spotify">Open in Spotify</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No vinyl recommendations found based on your criteria.</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="btn btn-back">Back to Playlist Selection</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fills = document.querySelectorAll('.completion-fill');
+        fills.forEach(fill => {
+            const percentage = fill.getAttribute('data-percentage');
+            fill.style.width = percentage + '%';
+        });
+    });
+</script>
+{% endblock %}

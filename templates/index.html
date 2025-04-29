@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not session.spotify_token %}
+    <div class="login-container">
+        <h2>Find Your One Hit Wonders & Vinyl Recommendations</h2>
+        <p>Discover artists and albums perfect for your collection!</p>
+        <a href="{{ auth_url }}" class="btn">Login with Spotify</a>
+    </div>
+{% else %}
+    <div class="playlist-container">
+        <h2>Select a Playlist</h2>
+        <div class="analysis-options">
+            <div class="option-card">
+                <h3>One Hit Wonders</h3>
+                <form action="{{ url_for('analyze') }}" method="POST">
+                    <select name="playlist_id" required>
+                        {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="create_playlist" name="create_playlist" checked>
+                        <label for="create_playlist">Create new playlist with results</label>
+                    </div>
+                    <button type="submit" class="btn">Find One Hit Wonders</button>
+                </form>
+            </div>
+
+            <div class="option-card">
+                <h3>Vinyl Recommendations</h3>
+                <form action="{{ url_for('vinyl_analysis') }}" method="POST">
+                    <select name="playlist_id" required>
+                        {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="threshold-container">
+                        <label for="threshold">Minimum album completion:</label>
+                        <select name="threshold" id="threshold">
+                            <option value="0.3">30%</option>
+                            <option value="0.5" selected>50%</option>
+                            <option value="0.7">70%</option>
+                            <option value="0.8">80%</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Find Vinyl Recommendations</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

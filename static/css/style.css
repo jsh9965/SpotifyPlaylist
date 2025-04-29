@@ -1,0 +1,208 @@
+:root {
+    --primary-color: #1B1B3A; /* Nightcrawler's indigo blue */
+    --secondary-color: #FF0000; /* Nightcrawler's red */
+    --text-color: #FFFFFF;
+    --background-color: #0F0F2A;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+h1 {
+    color: var(--secondary-color);
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.login-container, .playlist-container, .results-container {
+    background-color: var(--primary-color);
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+}
+
+.checkbox-container {
+    margin: 1rem 0;
+}
+
+.track-item {
+    background-color: var(--background-color);
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.track-item h3 {
+    margin: 0;
+    color: var(--secondary-color);
+}
+
+.playlist-link {
+    margin: 2rem 0;
+}
+
+.tracks-list {
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 2rem 0;
+}
+
+.btn-logout {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: var(--primary-color);
+    border: 2px solid var(--secondary-color);
+}
+
+.btn-logout:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Analysis Options */
+.analysis-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.option-card {
+    background-color: var(--primary-color);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 2px solid var(--secondary-color);
+}
+
+/* Vinyl Results */
+.vinyl-results-container {
+    padding: 2rem;
+}
+
+.albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.album-card {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.album-card:hover {
+    transform: translateY(-5px);
+}
+
+.album-cover {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.album-info {
+    padding: 1.5rem;
+}
+
+.completion-bar {
+    width: 100%;
+    height: 10px;
+    background-color: var(--background-color);
+    border-radius: 5px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.completion-fill {
+    height: 100%;
+    background-color: var(--secondary-color);
+    transition: width 0.3s ease;
+}
+
+.tracks-listened {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--background-color);
+    border-radius: 5px;
+}
+
+.tracks-listened ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+.tracks-listened li {
+    padding: 0.25rem 0;
+}
+
+.btn-spotify {
+    margin-top: 1rem;
+    width: 100%;
+    background-color: #1DB954;
+}
+
+.threshold-container {
+    margin: 1rem 0;
+}
+
+.percentage {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.artist {
+    color: #888;
+    font-style: italic;
+}
+
+.stats {
+    margin: 0.5rem 0;
+}

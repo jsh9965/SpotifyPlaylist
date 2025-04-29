@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="results-container">
+    <h2>Your One Hit Wonders</h2>
+    {% if tracks %}
+        {% if playlist_url %}
+        <div class="playlist-link">
+            <p>Your new playlist has been created!</p>
+            <a href="{{ playlist_url }}" target="_blank" class="btn">Open in Spotify</a>
+        </div>
+        {% endif %}
+        <div class="tracks-list">
+            {% for track in tracks %}
+            <div class="track-item">
+                <h3>{{ track.name }}</h3>
+                <p>by {{ track.artist }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No one hit wonders found in this playlist!</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="btn">Analyze Another Playlist</a>
+</div>
+{% endblock %}
