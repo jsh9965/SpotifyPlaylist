@@ -13,7 +13,7 @@
         <div class="analysis-options">
             <div class="option-card">
                 <h3>One Hit Wonders</h3>
-                <form action="{{ url_for('analyze') }}" method="POST">
+                <form action="{{ url_for('one_hit_wonder_analysis') }}" method="POST">
                     <select name="playlist_id" required>
                         {% for playlist in playlists %}
                         <option value="{{ playlist.id }}">{{ playlist.name }}</option>

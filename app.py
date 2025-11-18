@@ -67,9 +67,9 @@ def one_hit_wonder_analysis():
             playlist_url = spotify_client.create_playlist(one_hit_wonders, "My One Hit Wonders")
             return render_template('one_hit_wonder_results.html', tracks=one_hit_wonders, playlist_url=playlist_url)
         
-        return render_template('results.html', tracks=one_hit_wonders)
+        return render_template('one_hit_wonder_results.html', tracks=one_hit_wonders)
     except Exception as e:
-        print(f"Error in analyze route: {str(e)}")
+        print(f"Error in one hit wonder results.html route: {str(e)}")
         session.clear()
         return redirect(url_for('index'))
 
