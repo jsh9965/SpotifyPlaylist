@@ -51,7 +51,7 @@ class SpotifyClient:
 
         for track in tracks:
             if track['track']:
-                artist_id = track['track']['artists'][0]['id']
+                artist_id = track['track']['artists'][0]['id'] #First artist only
                 artist_tracks[artist_id].append({
                     'name': track['track']['name'],
                     'uri': track['track']['uri'],
