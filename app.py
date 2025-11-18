@@ -23,12 +23,11 @@ def get_spotify_client():
 @app.route('/')
 def index():
     try:
+        spotify_client = get_spotify_client()
         if 'spotify_token' not in session:
-            spotify_client = get_spotify_client()
             auth_url = spotify_client.sp.auth_manager.get_authorize_url()
             return render_template('index.html', auth_url=auth_url)
         
-        spotify_client = get_spotify_client()
         playlists = spotify_client.get_user_playlists()
         return render_template('index.html', playlists=playlists)
     except Exception as e:
@@ -45,16 +44,19 @@ def callback():
             # Get the token info
             token_info = spotify_client.sp.auth_manager.get_access_token(code)
             session['spotify_token'] = True
-            session['token_info'] = token_info
         return redirect(url_for('index'))
     except Exception as e:
         print(f"Error in callback: {str(e)}")
         return redirect(url_for('index'))
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/analyze', methods=['GET','POST'])
 def analyze():
     try:
         if 'spotify_token' not in session:
+            print("No Spotify token in session.")
+            return redirect(url_for('index'))
+        if request.method == 'GET':
+            print("Data needed for analysis.")
             return redirect(url_for('index'))
         
         playlist_id = request.form.get('playlist_id')
