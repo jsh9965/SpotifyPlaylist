@@ -49,8 +49,8 @@ def callback():
         print(f"Error in callback: {str(e)}")
         return redirect(url_for('index'))
 
-@app.route('/analyze', methods=['GET','POST'])
-def analyze():
+@app.route('/one-hit-wonder-analysis', methods=['GET','POST'])
+def one_hit_wonder_analysis():
     try:
         if 'spotify_token' not in session:
             print("No Spotify token in session.")
@@ -65,7 +65,7 @@ def analyze():
         one_hit_wonders = spotify_client.find_one_hit_wonders(playlist_id)
         if request.form.get('create_playlist'):
             playlist_url = spotify_client.create_playlist(one_hit_wonders, "My One Hit Wonders")
-            return render_template('results.html', tracks=one_hit_wonders, playlist_url=playlist_url)
+            return render_template('one_hit_wonder_results.html', tracks=one_hit_wonders, playlist_url=playlist_url)
         
         return render_template('results.html', tracks=one_hit_wonders)
     except Exception as e:
@@ -92,6 +92,7 @@ def vinyl_analysis():
         return render_template('vinyl_results.html', recommendations=vinyl_recommendations)
     except Exception as e:
         print(f"Error in vinyl analysis route: {str(e)}")
+        session.clear()
         return redirect(url_for('index'))
 
 @app.route('/logout')
