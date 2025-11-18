@@ -1,4 +1,6 @@
 from flask import Flask, render_template, redirect, session, request, url_for
+import uuid
+import os
 from config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI, SECRET_KEY
 from spotify_client import SpotifyClient
 import time
@@ -7,7 +9,16 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 def get_spotify_client():
-    return SpotifyClient(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI)
+    # Ensure each user/session gets its own cache file to avoid sharing tokens
+    if 'spotify_cache_path' not in session:
+        session['spotify_cache_path'] = f".spotify_cache_{uuid.uuid4().hex}"
+    return SpotifyClient(
+        SPOTIFY_CLIENT_ID,
+        SPOTIFY_CLIENT_SECRET,
+        SPOTIFY_REDIRECT_URI,
+        cache_path=session['spotify_cache_path'],
+        show_dialog=False
+    )
 
 @app.route('/')
 def index():
@@ -83,6 +94,9 @@ def vinyl_analysis():
 
 @app.route('/logout')
 def logout():
+    cache_path = session.pop('spotify_cache_path', None)
+    if cache_path and os.path.exists(cache_path):
+        os.remove(cache_path)
     session.clear()
     return redirect(url_for('index'))
 

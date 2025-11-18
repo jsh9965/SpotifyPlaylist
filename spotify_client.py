@@ -3,21 +3,30 @@ from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
 
 class SpotifyClient:
-    def __init__(self, client_id, client_secret, redirect_uri):
+    def __init__(self, client_id, client_secret, redirect_uri, cache_path=None, show_dialog=True):
+        """
+        client_id, client_secret, redirect_uri: Spotify app credentials
+        cache_path: path to the cache file for this client instance (use a per-session cache)
+        show_dialog: whether to force the consent dialog
+        """
         self.scope = 'playlist-read-private playlist-modify-public playlist-modify-private'
-        
-        # Create cache handler with a unique name
-        cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=".spotify_cache")
-        
+
+        # Default cache filename if none provided (preserves previous behavior)
+        if cache_path is None:
+            cache_path = ".spotify_cache"
+
+        # Create cache handler with provided cache path (per-session cache avoids sharing tokens)
+        cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=cache_path)
+
         auth_manager = SpotifyOAuth(
             client_id=client_id,
             client_secret=client_secret,
             redirect_uri=redirect_uri,
             scope=self.scope,
             cache_handler=cache_handler,
-            show_dialog=True  # This forces the user to approve the app every time
+            show_dialog=show_dialog
         )
-        
+
         self.sp = spotipy.Spotify(auth_manager=auth_manager)
 
     def get_user_playlists(self):
