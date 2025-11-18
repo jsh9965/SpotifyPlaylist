@@ -1,9 +1,9 @@
-from flask import Flask, render_template, redirect, session, request, url_for
+from flask import Flask, render_template, redirect, session, request, url_for, flash
 import uuid
 import os
 from config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI, SECRET_KEY
 from spotify_client import SpotifyClient
-import time
+#import time #Not used right now but might want to track and discard old cached tokens
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -32,7 +32,7 @@ def index():
         return render_template('index.html', playlists=playlists)
     except Exception as e:
         print(f"Error in index route: {str(e)}")
-        session.clear()  # Clear the session if there's an error
+        session.clear()  # Clear the session if  error
         return redirect(url_for('index'))
 
 @app.route('/callback')
@@ -41,8 +41,8 @@ def callback():
         spotify_client = get_spotify_client()
         code = request.args.get('code')
         if code:
-            # Get the cached token
-            token_info = spotify_client.sp.auth_manager.get_cached_token()
+            # Exchange code for token
+            token_info = spotify_client.sp.auth_manager.get_access_token(code)
             # Mark user as signed in if token existed
             if token_info:
                 session['spotify_token'] = True
@@ -58,7 +58,7 @@ def one_hit_wonder_analysis():
             print("No Spotify token in session.")
             return redirect(url_for('index'))
         if request.method == 'GET':
-            print("Data needed for analysis.")
+            flash("Must choose a playlist", "warning")
             return redirect(url_for('index'))
         
         playlist_id = request.form.get('playlist_id')
@@ -75,10 +75,13 @@ def one_hit_wonder_analysis():
         session.clear()
         return redirect(url_for('index'))
 
-@app.route('/vinyl-analysis', methods=['POST'])
+@app.route('/vinyl-analysis', methods=['GET', 'POST'])
 def vinyl_analysis():
     try:
         if 'spotify_token' not in session:
+            return redirect(url_for('index'))
+        if request.method == 'GET':
+            flash("Must choose a playlist", "warning")
             return redirect(url_for('index'))
         
         playlist_id = request.form.get('playlist_id')
