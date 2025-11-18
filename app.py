@@ -41,9 +41,11 @@ def callback():
         spotify_client = get_spotify_client()
         code = request.args.get('code')
         if code:
-            # Get the token info
-            token_info = spotify_client.sp.auth_manager.get_access_token(code)
-            session['spotify_token'] = True
+            # Get the cached token
+            token_info = spotify_client.sp.auth_manager.get_cached_token()
+            # Mark user as signed in if token existed
+            if token_info:
+                session['spotify_token'] = True
         return redirect(url_for('index'))
     except Exception as e:
         print(f"Error in callback: {str(e)}")
