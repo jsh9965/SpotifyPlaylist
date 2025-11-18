@@ -90,6 +90,19 @@ select {
     margin: 2rem 0;
 }
 
+.btn-home {
+    position: absolute;
+    top: -5px;
+    left: -20px;
+    background-color: transparent;
+    border: none;
+}
+
+.btn-home .img {
+    width: 75px;
+    height: 75px;
+}
+
 .btn-logout {
     position: absolute;
     top: 20px;

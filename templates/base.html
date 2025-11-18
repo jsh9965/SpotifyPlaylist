@@ -10,6 +10,9 @@
     <div class="container">
         <header>
             <h1>Spotify One Hit Wonders</h1>
+            <a href="{{ url_for('index') }}" class="btn btn-home">
+                <img src="{{ url_for('static', filename='images/NightcrawlerLogo.png') }}" alt="Home" class="img">
+            </a>
             {% if session.spotify_token %}
             <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
             {% endif %}
