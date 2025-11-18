@@ -1,1 +1,6 @@
 .env
+# Ignore per-session Spotify cache files
+.spotify_cache_*
+
+# Ignore default cache file
+.spotify_cache
