@@ -4,18 +4,12 @@ from collections import defaultdict
 
 class SpotifyClient:
     def __init__(self, client_id, client_secret, redirect_uri, cache_path=None, show_dialog=True):
-        """
-        client_id, client_secret, redirect_uri: Spotify app credentials
-        cache_path: path to the cache file for this client instance (use a per-session cache)
-        show_dialog: whether to force the consent dialog
-        """
         self.scope = 'playlist-read-private playlist-modify-public playlist-modify-private'
 
-        # Default cache filename if none provided (preserves previous behavior)
         if cache_path is None:
-            cache_path = ".spotify_cache"
+            cache_path = ".spotify_cache" #ONLY FOR TESTING (ALL USERS USE SAME CACHE)
 
-        # Create cache handler with provided cache path (per-session cache avoids sharing tokens)
+        # Create cache handler with provided cache path which must be different for every session to prevent token sharing
         cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=cache_path)
 
         auth_manager = SpotifyOAuth(
@@ -24,7 +18,7 @@ class SpotifyClient:
             redirect_uri=redirect_uri,
             scope=self.scope,
             cache_handler=cache_handler,
-            show_dialog=show_dialog
+            show_dialog=show_dialog #Controls whether user must auth every time
         )
 
         self.sp = spotipy.Spotify(auth_manager=auth_manager)
@@ -84,8 +78,7 @@ class SpotifyClient:
         return playlist['external_urls']['spotify']
     
     def get_album_tracks(self, album_id):
-        """Get all tracks from an album."""
-        results = self.sp.album_tracks(album_id)
+        results = self.sp.album_tracks(album_id) #Start by grabbing all the albums on the playlist
         tracks = []
         while results:
             tracks.extend(results['items'])
@@ -96,20 +89,18 @@ class SpotifyClient:
         return tracks
 
     def analyze_albums_for_vinyl(self, playlist_id, threshold=0.5, minimum_album_size=4):
-        """
-        Analyze playlist to find albums that would be worth buying on vinyl.
-        threshold: minimum percentage of album tracks that appear in playlist
-        minimum_album_size: minimum number of songs the album must have to be considered
-        """
+        #Overview: loop through every song and increment the album it is from, then loop through albums and see if the increment
+        #Is greater than necessary threshold
+
         playlist_tracks = self.get_playlist_tracks(playlist_id)
         album_track_counts = {}  # {album_id: {'total': 0, 'listened': 0, 'info': {}}}
 
-        # Count tracks from playlist
+        #Loop through tracks
         for track in playlist_tracks:
             if not track['track']:
-                continue
+                continue #Can happen for songs that are no longer available or local
 
-            # Skip singles and EPs (albums with less than minimum_album_size tracks)
+            # Skip singles and EPs (too small to get vinyls :( )
             if track['track']['album']['total_tracks'] < minimum_album_size:
                 continue
 
@@ -120,24 +111,23 @@ class SpotifyClient:
                     'listened': 0,
                     'info': {
                         'name': track['track']['album']['name'],
-                        'artist': track['track']['artists'][0]['name'],
+                        'artist': track['track']['artists'][0]['name'], #Only first artist
                         'image_url': track['track']['album']['images'][0]['url'] if track['track']['album']['images'] else None,
                         'release_date': track['track']['album']['release_date'],
                         'spotify_url': track['track']['album']['external_urls']['spotify'],
-                        'tracks_listened': set()  # Track names you listen to
+                        'tracks_listened': set()  # Track listened to songs for display at end #Set to avoid duplicates
                     }
                 }
 
             album_track_counts[album_id]['listened'] += 1
             album_track_counts[album_id]['info']['tracks_listened'].add(track['track']['name'])
 
-        # Process albums and calculate percentages
+        #Now process albums
         vinyl_recommendations = []
         for album_id, data in album_track_counts.items():
             try:
                 total_tracks = data['total']
                 
-                # Calculate percentage of album listened to
                 listen_percentage = data['listened'] / total_tracks
                 
                 if listen_percentage >= threshold:
@@ -157,6 +147,6 @@ class SpotifyClient:
                 print(f"Error processing album {album_id}: {str(e)}")
                 continue
 
-        # Sort by percentage (highest first) and then by number of tracks listened
-        vinyl_recommendations.sort(key=lambda x: (x['percentage'], x['listened_tracks']), reverse=True)
+        # Sort by percentage with number of tracks listened as tiebreaker
+        vinyl_recommendations.sort(key=lambda x: (x['percentage'], x['listened_tracks']), reverse=True) #High to low
         return vinyl_recommendations
