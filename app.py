@@ -5,6 +5,7 @@ from config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_UR
 from spotify_client import SpotifyClient
 #import time #Not used right now but might want to track and discard old cached tokens
 
+print("Current SPOTIFY_REDIRECT_URI:", SPOTIFY_REDIRECT_URI)
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
