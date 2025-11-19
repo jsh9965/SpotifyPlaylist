@@ -1,4 +1,6 @@
 .env
+__pycache__/
+*.pyc
 # Ignore per-session Spotify cache files
 .spotify_cache_*
 
